@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "8462566571",
+    "project_id": "incivismoadrianpeiro",
+    "storage_bucket": "incivismoadrianpeiro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8462566571:android:6837509cb2fb8445a8e3ee",
+        "android_client_info": {
+          "package_name": "com.example.incivismoadrianpeiro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "8462566571-bi9nfcafefbgteu9fiigho6pcl1n3ubb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDucgr9W-bFcivFCBUSRsNUDoCHIO51nO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8462566571-bi9nfcafefbgteu9fiigho6pcl1n3ubb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

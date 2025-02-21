@@ -26,10 +26,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val app: Application = application
 
     private val currentAddress = MutableLiveData<String>()
-    val checkPermission = MutableLiveData<String>()
+    private val checkPermission = MutableLiveData<String>()
     private val buttonText = MutableLiveData<String>()
     private val progressBar = MutableLiveData<Boolean>()
-    private val currentLatLng = MutableLiveData<LatLng>()
+    internal val user = MutableLiveData<FirebaseUser?>();
+    private val currentLatLng =  MutableLiveData<LatLng>();
+
 
     private var mTrackingLocation: Boolean = false
     private var mFusedLocationClient: FusedLocationProviderClient? = null
@@ -41,19 +43,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-
-    fun getCurrentLatLng() : MutableLiveData<LatLng>{
-        return currentLatLng;
+    fun getCurrentLatLng(): MutableLiveData<LatLng> {
+        return currentLatLng
     }
 
-    private fun fechAddress (location : Location){
-        try {
-            val latlng = LatLng(location.latitude, location.longitude)
-            currentLatLng.postValue(latlng)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
 
     fun setFusedLocationClient(client: FusedLocationProviderClient) {
@@ -67,6 +60,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     fun getProgressBar(): LiveData<Boolean> = progressBar
 
     fun getCheckPermission(): LiveData<String> = checkPermission
+    
 
     private fun getLocationRequest(): LocationRequest {
         return LocationRequest.create().apply {
@@ -84,7 +78,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     @SuppressLint("MissingPermission")
     fun startTrackingLocation(needsChecking: Boolean) {
         if (needsChecking) {
@@ -94,7 +87,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             currentAddress.postValue("Carregant...")
             progressBar.postValue(true)
             mTrackingLocation = true
-            buttonText.value = "apaga el seguimiento"
+            buttonText.value = "apaga el seguiment de la ubicacion"
         }
     }
 
@@ -103,7 +96,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             mFusedLocationClient?.removeLocationUpdates(mLocationCallback)
             mTrackingLocation = false
             progressBar.postValue(false)
-            buttonText.value = "Comineza a seguir"
+            buttonText.value = "Comença a seguir"
         }
     }
 
@@ -116,9 +109,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             var resultMessage = ""
 
             try {
+                val latLng = LatLng(location.latitude, location.longitude)
+                currentLatLng.postValue(latLng)
+
                 val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 if (addresses.isNullOrEmpty()) {
-                    resultMessage = "No se ha encontrado"
+                    resultMessage = "No se encontro na"
                     Log.e("INCIVISME", resultMessage)
                 } else {
                     val address = addresses[0]
@@ -147,23 +143,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    var user: MutableLiveData<FirebaseUser> = MutableLiveData()
-    fun getUser(): LiveData<FirebaseUser>{
+
+    fun getUser(): MutableLiveData<FirebaseUser?> {
         return user
     }
 
-    fun setUser(passedUser: FirebaseUser){
+    fun setUser(passedUser: FirebaseUser?) {
         user.postValue(passedUser)
     }
-
-
-
-    
-
-
-
 
     fun get(java: Class<HomeViewModel>) {
 
     }
+
 }

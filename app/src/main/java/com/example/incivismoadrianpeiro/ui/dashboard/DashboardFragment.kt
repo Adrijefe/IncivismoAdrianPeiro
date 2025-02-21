@@ -1,6 +1,7 @@
 package com.example.incivismoadrianpeiro.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,80 +13,79 @@ import com.example.incivismoadrianpeiro.databinding.FragmentDashboardBinding
 import com.example.incivismoadrianpeiro.databinding.RvIncidenciesItemBinding
 import com.example.incivismoadrianpeiro.ui.Incidencia
 import com.example.incivismoadrianpeiro.ui.home.HomeViewModel
-import com.firebase.ui.auth.data.model.User
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+
 class DashboardFragment : Fragment() {
-    private var binding: FragmentDashboardBinding? = null
-    private var authUser: FirebaseUser ? = null
-    private var adapter: IncidenciaAdapter? = null
+
+    private var _binding: FragmentDashboardBinding? = null
+    private val binding get() = _binding!!
+
+    private var authUser: FirebaseUser? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        ViewModelProvider(this)[DashboardViewModel::class.java]
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(HomeViewModel::class.java)
 
-        val sharedViewModel: HomeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        sharedViewModel.getUser ().observe(viewLifecycleOwner) { user ->
+        sharedViewModel.user.observe(viewLifecycleOwner) { user ->
             authUser = user
+
             if (user != null) {
                 val base = FirebaseDatabase.getInstance("https://incivismoadrianpeiro-default-rtdb.europe-west1.firebasedatabase.app").reference
+
                 val users = base.child("users")
-                val userReference = users.child(user.uid)
-                val incidencies = userReference.child("incidencies")
+                val uid = users.child(user.uid)
+                val incidencies = uid.child("incidencies")
 
                 val options = FirebaseRecyclerOptions.Builder<Incidencia>()
                     .setQuery(incidencies, Incidencia::class.java)
-                    .setLifecycleOwner(viewLifecycleOwner)
+                    .setLifecycleOwner(this)
                     .build()
 
-                adapter = IncidenciaAdapter(options)
+                val adapter = IncidenciaAdapter(options)
 
-                binding?.rvIncidencies?.adapter = adapter
-                binding?.rvIncidencies?.layoutManager = LinearLayoutManager(requireContext())
-                adapter?.startListening()
+                binding.rvIncidencies.adapter = adapter
+                binding.rvIncidencies.layoutManager = LinearLayoutManager(requireContext())
             }
         }
-        return binding?.root!!
+
+        return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 
-    override fun onStart() {
-        super.onStart()
-        adapter?.startListening()
-    }
+    inner class IncidenciaAdapter(options: FirebaseRecyclerOptions<Incidencia>) :
+        FirebaseRecyclerAdapter<Incidencia, IncidenciaAdapter.IncidenciaViewHolder>(options) {
 
-    internal inner class IncidenciaAdapter(options: FirebaseRecyclerOptions<Incidencia?>) :
-        FirebaseRecyclerAdapter<Incidencia, IncidenciaAdapter.IncidenciaViewholder>(options) {
         override fun onBindViewHolder(
-            holder: IncidenciaViewholder, position: Int, model: Incidencia
+            holder: IncidenciaViewHolder,
+            position: Int,
+            model: Incidencia
         ) {
+            Log.d("NO va", "" + model.descripcio);
             holder.binding.txtDescripcio.text = model.descripcio
             holder.binding.txtAdreca.text = model.direccio
         }
 
-        override fun onCreateViewHolder(
-            parent: ViewGroup, viewType: Int
-        ): IncidenciaViewholder {
-            return IncidenciaViewholder(
-                RvIncidenciesItemBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent, false
-                )
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IncidenciaViewHolder {
+            val binding = RvIncidenciesItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent, false
             )
+            return IncidenciaViewHolder(binding)
         }
 
-        internal inner class IncidenciaViewholder(var binding: RvIncidenciesItemBinding) :
+        inner class IncidenciaViewHolder(val binding: RvIncidenciesItemBinding) :
             RecyclerView.ViewHolder(binding.root)
     }
 }
+

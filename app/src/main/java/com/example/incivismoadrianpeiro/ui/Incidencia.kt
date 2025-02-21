@@ -5,5 +5,6 @@ class Incidencia {
     var longitud: String?= null
     var direccio: String?= null
     var descripcio: String?= null
+    var url: String? = null
 
 }

@@ -40,10 +40,6 @@ class NotificationsFragment : Fragment() {
     }
 
 
-
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,7 +78,6 @@ class NotificationsFragment : Fragment() {
 
         return root
     }
-
 
 
     override fun onResume() {

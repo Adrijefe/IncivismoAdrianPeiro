@@ -11,21 +11,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.example.incivismoadrianpeiro.R
 import com.example.incivismoadrianpeiro.databinding.FragmentHomeBinding
 import com.example.incivismoadrianpeiro.ui.Incidencia
 import com.example.incivismoadrianpeiro.ui.notifications.NotificationsFragment.Companion.REQUEST_TAKE_PHOTO
 
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -39,6 +37,12 @@ class HomeFragment : Fragment() {
     private var authUser: FirebaseUser? = null
     private var mCurrentPhotoPath: String? = null
     private var photoURI: Uri? = null
+    val storage: FirebaseStorage = FirebaseStorage.getInstance()
+    val storageRef = storage.getReference()
+
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,7 +103,7 @@ class HomeFragment : Fragment() {
 
                 val users = reference.child("users")
                 val uid = users.child(authUser?.uid ?: "")
-                val incidencies = uid.child("incidencies")
+                val incidencies = uid.child("com.example.incivismoadrianpeiro.getIncidencies")
                 val referencePush = incidencies.push()
                 referencePush.setValue(incidencia).addOnCompleteListener { task ->
 
@@ -123,9 +127,7 @@ class HomeFragment : Fragment() {
     }
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        Log.d("XXX", context?.packageManager?.let { takePictureIntent.resolveActivity(it) }.toString())
         if (context?.packageManager?.let { takePictureIntent.resolveActivity(it) } != null) {
-            Log.d("XXX", "Caba es marica")
             var photoFile: File? = null
             try {
                 photoFile = createImagenFile()
@@ -140,7 +142,6 @@ class HomeFragment : Fragment() {
                     "com.example.android.fileprovider",
                     photoFile
                 )
-                Log.d("XXX","CABA ES GAY")
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
             }
@@ -168,6 +169,9 @@ class HomeFragment : Fragment() {
 
         )
         mCurrentPhotoPath = image.absolutePath
+
+
+
         return image
     }
 

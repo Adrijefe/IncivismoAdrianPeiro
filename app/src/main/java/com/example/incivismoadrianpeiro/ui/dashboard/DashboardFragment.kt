@@ -41,7 +41,7 @@ class DashboardFragment : Fragment() {
 
                 val users = base.child("users")
                 val uid = users.child(user.uid)
-                val incidencies = uid.child("incidencies")
+                val incidencies = uid.child("com.example.incivismoadrianpeiro.getIncidencies")
 
                 val options = FirebaseRecyclerOptions.Builder<Incidencia>()
                     .setQuery(incidencies, Incidencia::class.java)

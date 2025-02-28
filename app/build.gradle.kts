@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,5 +64,6 @@ dependencies {
     implementation("com.google.firebase:firebase-appcheck:18.0.0")
     implementation("org.osmdroid:osmdroid-android:6.1.14")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+    implementation(kotlin("script-runtime"))
 
 }
